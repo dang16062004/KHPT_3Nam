@@ -5,14 +5,15 @@
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat"],
 
-  // UI tinh trong public/ do Cloudflare phuc vu truc tiep (khong ton CPU Worker).
-  // `run_worker_first` bat buoc phai liet ke "/" — neu khong, trang chu se duoc tra
-  // ve truoc khi Worker kip kiem tra dang nhap.
+  // Worker chay TRUOC moi request. Bat buoc phai la `true`: dang thu voi mang
+  // ["/", "/auth/*", ...] thi tren production "/" va "/auth/*" khong khop, asset
+  // handler nuot request va tra 404 — trang chu se khong bao gio duoc kiem tra dang nhap.
+  // Doi lai moi file tinh ton mot lan goi Worker, khong dang ke o quy mo ca nhan.
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
     "not_found_handling": "none",
-    "run_worker_first": ["/", "/api/*", "/auth/*"]
+    "run_worker_first": true
   },
 
   // Cron 1: quet nhac nho den han. Cron 2: 21:00 gio VN (14:00 UTC) kiem tra streak.
@@ -24,7 +25,7 @@
     {
       "binding": "DB",
       "database_name": "khpt-assistant",
-      "database_id": "00000000-0000-0000-0000-000000000000" // <-- THAY bang id that tu `wrangler d1 create khpt-assistant`
+      "database_id": "2da0c3dc-8e3e-4ffd-ae35-7d481a230ce5"
     }
   ],
 
@@ -34,6 +35,12 @@
     "TIMEZONE": "Asia/Ho_Chi_Minh",
     "MAX_HISTORY_MESSAGES": "20"
   },
+
+  // Chi giu dung mot URL cong khai. Preview URL cua tung phien ban se tao them
+  // nhieu ten mien khac — moi cai lai phai them vao redirect URI cua Google, va la
+  // them be mat tan cong cho mot app ca nhan.
+  "workers_dev": true,
+  "preview_urls": false,
 
   "observability": {
     "enabled": true
