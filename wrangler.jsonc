@@ -1,0 +1,41 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "khpt-assistant",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // UI tinh trong public/ do Cloudflare phuc vu truc tiep (khong ton CPU Worker).
+  // `run_worker_first` bat buoc phai liet ke "/" — neu khong, trang chu se duoc tra
+  // ve truoc khi Worker kip kiem tra dang nhap.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "none",
+    "run_worker_first": ["/", "/api/*", "/auth/*"]
+  },
+
+  // Cron 1: quet nhac nho den han. Cron 2: 21:00 gio VN (14:00 UTC) kiem tra streak.
+  "triggers": {
+    "crons": ["*/15 * * * *", "0 14 * * *"]
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "khpt-assistant",
+      "database_id": "00000000-0000-0000-0000-000000000000" // <-- THAY bang id that tu `wrangler d1 create khpt-assistant`
+    }
+  ],
+
+  // Bien khong bi mat. Cac gia tri bi mat nap qua `wrangler secret`.
+  "vars": {
+    "GEMINI_MODEL": "gemini-3.8-flash",
+    "TIMEZONE": "Asia/Ho_Chi_Minh",
+    "MAX_HISTORY_MESSAGES": "20"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}

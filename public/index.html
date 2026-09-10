@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Trợ lý cá nhân</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">🎯</span>
+    <div>
+      <div class="brand-name">Trợ lý cá nhân</div>
+      <div class="brand-sub" id="brandSub">đang tải…</div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab is-active" data-tab="chat" role="tab">Chat</button>
+    <button class="tab" data-tab="plan" role="tab">Kế hoạch</button>
+    <button class="tab" data-tab="progress" role="tab">Tiến độ</button>
+  </nav>
+  <button class="ghost-btn" id="logoutBtn" title="Đăng xuất">Đăng xuất</button>
+</header>
+
+<!-- ============================ CHAT ============================ -->
+<main class="panel is-active" id="panel-chat">
+  <div class="chat-scroll" id="chatScroll">
+    <div class="empty" id="chatEmpty">
+      <h2>Chào bạn 👋</h2>
+      <p>Mình có thể <b>nhắc nhở</b>, <b>khuyên dựa trên kế hoạch</b>, và <b>theo dõi tiến độ</b> của bạn.</p>
+      <div class="suggestions">
+        <button class="chip" data-send="Nhắc tôi học tiếng Anh lúc 8h tối mai">Nhắc học tiếng Anh 8h tối mai</button>
+        <button class="chip" data-send="Hôm nay tôi học 45 phút tiếng Anh và chạy 3km">Ghi tiến độ hôm nay</button>
+        <button class="chip" data-send="Tôi đang đi đúng kế hoạch chưa?">Tôi có đúng kế hoạch không?</button>
+      </div>
+    </div>
+  </div>
+
+  <form class="composer" id="chatForm">
+    <textarea id="chatInput" rows="1" placeholder="Nhắn gì đó… (Enter để gửi, Shift+Enter xuống dòng)" autocomplete="off"></textarea>
+    <button type="submit" id="sendBtn" aria-label="Gửi">↑</button>
+  </form>
+</main>
+
+<!-- ============================ KẾ HOẠCH ============================ -->
+<main class="panel" id="panel-plan">
+  <div class="pad">
+    <div class="section-head">
+      <div>
+        <h2>Kế hoạch cá nhân</h2>
+        <p class="muted">Đây là dữ liệu bot đọc khi đưa lời khuyên. Sửa cho khớp mục tiêu thật của bạn rồi bấm Lưu.</p>
+      </div>
+      <div class="row-actions">
+        <button class="ghost-btn" id="planReload">Tải lại</button>
+        <button class="primary-btn" id="planSave">Lưu</button>
+      </div>
+    </div>
+    <div class="notice" id="planNotice" hidden></div>
+    <textarea id="planEditor" class="code-editor" spellcheck="false"></textarea>
+  </div>
+</main>
+
+<!-- ============================ TIẾN ĐỘ ============================ -->
+<main class="panel" id="panel-progress">
+  <div class="pad">
+    <div class="section-head">
+      <div>
+        <h2>Tiến độ</h2>
+        <p class="muted">Tổng hợp <span id="progressDays">14</span> ngày gần nhất, so với chỉ tiêu trong kế hoạch.</p>
+      </div>
+      <select id="daysSelect" class="select">
+        <option value="7">7 ngày</option>
+        <option value="14" selected>14 ngày</option>
+        <option value="30">30 ngày</option>
+        <option value="90">90 ngày</option>
+      </select>
+    </div>
+
+    <div class="cards" id="summaryCards"></div>
+
+    <h3 class="sub-head">Ghi nhanh</h3>
+    <form class="quick-log" id="quickLog">
+      <select name="area" class="select" required>
+        <option value="ngoai_ngu">Ngoại ngữ</option>
+        <option value="ai">AI / Lập trình</option>
+        <option value="kinh_te">Kinh tế</option>
+        <option value="van_dong">Vận động</option>
+        <option value="an_uong">Ăn uống</option>
+      </select>
+      <input name="value" type="number" step="any" min="0" placeholder="Giá trị" class="input" required>
+      <input name="unit" type="text" placeholder="Đơn vị (phút, km…)" class="input" required>
+      <input name="date" type="date" class="input">
+      <button type="submit" class="primary-btn">Ghi</button>
+    </form>
+    <div class="notice" id="logNotice" hidden></div>
+
+    <h3 class="sub-head">Nhắc nhở đã đặt</h3>
+    <div id="remindersList" class="list"></div>
+
+    <h3 class="sub-head">Bản ghi gần đây</h3>
+    <div id="entriesList" class="list"></div>
+  </div>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>

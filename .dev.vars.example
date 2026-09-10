@@ -1,0 +1,19 @@
+# Copy file nay thanh `.dev.vars` roi dien gia tri that.
+# `.dev.vars` da nam trong .gitignore — KHONG BAO GIO commit no.
+# Tren production, cac gia tri nay duoc nap bang: npx wrangler secret bulk .secrets.json
+
+# 1. Gemini API key — lay tai https://aistudio.google.com/apikey
+GEMINI_API_KEY="AIza..."
+
+# 2. OAuth client (loai "Web application") tu Google Cloud Console
+GOOGLE_CLIENT_ID="xxxxx.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="GOCSPX-..."
+
+# 3. Email DUY NHAT duoc phep dang nhap. Cung la dia chi nhan moi email nhac nho.
+ALLOWED_EMAIL="phamcongdang16062004@gmail.com"
+
+# 4. Khoa ky cookie phien — sinh bang: openssl rand -base64 32
+SESSION_SECRET="thay-bang-chuoi-random-32-byte"
+
+# 5. Khoa ma hoa refresh token truoc khi luu vao D1 — sinh bang: openssl rand -base64 32
+TOKEN_ENC_KEY="thay-bang-chuoi-random-32-byte-khac"

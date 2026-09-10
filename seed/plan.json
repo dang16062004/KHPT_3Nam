@@ -1,0 +1,75 @@
+{
+  "owner": "Pham Cong Dang",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "horizon": { "start": "2026-01-01", "end": "2028-12-31" },
+  "ghi_chu": "Day la du lieu MAU. Vao tab 'Ke hoach' tren web de sua lai cho dung muc tieu that cua ban. Truong 'direction' quyet dinh cach canh bao: at_least = phai dat toi thieu, at_most = khong duoc vuot qua.",
+
+  "areas": {
+    "ngoai_ngu": {
+      "label": "Ngoại ngữ",
+      "muc_tieu_3_nam": "Đạt IELTS 7.0, giao tiếp công việc trôi chảy",
+      "daily_target": { "value": 60, "unit": "phut", "direction": "at_least" },
+      "weekly_target": { "value": 360, "unit": "phut", "direction": "at_least" },
+      "milestones": [
+        { "deadline": "2026-12-31", "muc_tieu": "IELTS 6.0, nghe hiểu podcast tốc độ thường" },
+        { "deadline": "2027-12-31", "muc_tieu": "IELTS 6.5, thuyết trình 10 phút không kịch bản" },
+        { "deadline": "2028-12-31", "muc_tieu": "IELTS 7.0, phỏng vấn kỹ thuật bằng tiếng Anh" }
+      ]
+    },
+
+    "ai": {
+      "label": "AI / Lập trình",
+      "muc_tieu_3_nam": "Xây được sản phẩm AI hoàn chỉnh, hiểu sâu function calling, RAG, fine-tuning",
+      "daily_target": { "value": 90, "unit": "phut", "direction": "at_least" },
+      "weekly_target": { "value": 540, "unit": "phut", "direction": "at_least" },
+      "milestones": [
+        { "deadline": "2026-12-31", "muc_tieu": "Hoàn thành 3 project AI có deploy thật" },
+        { "deadline": "2027-12-31", "muc_tieu": "Nắm vững RAG + vector DB, đóng góp 1 repo open-source" },
+        { "deadline": "2028-12-31", "muc_tieu": "Đi làm đúng mảng AI hoặc ra sản phẩm có người dùng thật" }
+      ]
+    },
+
+    "kinh_te": {
+      "label": "Kinh tế / Tài chính cá nhân",
+      "muc_tieu_3_nam": "Có quỹ dự phòng 6 tháng chi tiêu, hiểu cơ bản về đầu tư",
+      "daily_target": { "value": 200000, "unit": "vnd", "direction": "at_most" },
+      "monthly_target": { "value": 6000000, "unit": "vnd", "direction": "at_most" },
+      "tiet_kiem_hang_thang": { "value": 3000000, "unit": "vnd", "direction": "at_least" },
+      "milestones": [
+        { "deadline": "2026-12-31", "muc_tieu": "Ghi chép chi tiêu đều đặn 12 tháng, tiết kiệm 30 triệu" },
+        { "deadline": "2027-12-31", "muc_tieu": "Quỹ dự phòng 3 tháng, đọc xong 5 cuốn về tài chính" },
+        { "deadline": "2028-12-31", "muc_tieu": "Quỹ dự phòng 6 tháng, bắt đầu đầu tư đều đặn" }
+      ]
+    },
+
+    "van_dong": {
+      "label": "Vận động",
+      "muc_tieu_3_nam": "Duy trì thể lực ổn định, chạy được 10km liên tục",
+      "daily_target": { "value": 30, "unit": "phut", "direction": "at_least" },
+      "weekly_target": { "value": 4, "unit": "buoi", "direction": "at_least" },
+      "milestones": [
+        { "deadline": "2026-12-31", "muc_tieu": "Chạy 5km không nghỉ" },
+        { "deadline": "2027-12-31", "muc_tieu": "Chạy 10km, tập gym đều 3 buổi/tuần" },
+        { "deadline": "2028-12-31", "muc_tieu": "Hoàn thành 1 giải bán marathon" }
+      ]
+    },
+
+    "an_uong": {
+      "label": "Ăn uống",
+      "muc_tieu_3_nam": "Ăn đủ bữa, ngủ đủ giấc, hạn chế đồ ăn nhanh",
+      "daily_target": { "value": 3, "unit": "bua", "direction": "at_least" },
+      "weekly_target": { "value": 2, "unit": "lan_do_an_nhanh", "direction": "at_most" },
+      "milestones": [
+        { "deadline": "2026-12-31", "muc_tieu": "Bỏ hẳn bỏ bữa sáng, ngủ trước 24h" },
+        { "deadline": "2027-12-31", "muc_tieu": "Tự nấu ăn ít nhất 4 bữa/tuần" },
+        { "deadline": "2028-12-31", "muc_tieu": "Chỉ số sức khỏe trong ngưỡng bình thường" }
+      ]
+    }
+  },
+
+  "quy_tac_canh_bao": {
+    "so_ngay_lech_lien_tiep_thi_canh_bao": 3,
+    "gio_nhac_hang_ngay": "21:00",
+    "review_ke_hoach_moi": "3 thang"
+  }
+}

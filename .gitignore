@@ -1,0 +1,20 @@
+# Secrets — TUYET DOI khong commit
+.dev.vars
+.dev.vars.local
+.secrets.json
+credentials/
+*.pem
+
+# Dependencies
+node_modules/
+
+# Cloudflare
+.wrangler/
+dist/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
