@@ -213,7 +213,9 @@ app.get('/api/history', async (c) => {
 });
 
 app.delete('/api/history', async (c) => {
-  await clearMessages(c.env, c.get('session').sub);
+  const s = c.get('session');
+  await clearMessages(c.env, s.sub);
+  await audit(c.env, s.sub, 'ui:clear_history', null, true, 'nguoi dung xoa lich su chat');
   return c.json({ ok: true });
 });
 

@@ -41,7 +41,49 @@ Ràng buộc được khoá **trong code**, không chỉ dặn trong prompt: too
 
 **Khác:** sáng/tối, dùng tốt trên điện thoại, tự quy đổi đơn vị (2 giờ = 120 phút, "phút" = "phut").
 
-## 3. Cách hoạt động
+## 3. Hướng dẫn sử dụng
+
+### Lần đầu (làm 1 lần)
+
+1. Mở link → **Đăng nhập bằng Google** bằng `phamcongdang16062004@gmail.com`.
+2. Gặp *"Google hasn't verified this app"* → bấm **Advanced** → **Go to … (unsafe)** → **tích đủ các ô quyền** (thiếu ô Gmail/Calendar thì bot không gửi mail/tạo lịch được).
+3. Vào tab **Kế hoạch**, sửa số liệu mẫu cho đúng mục tiêu của bạn → **Lưu kế hoạch**. Mỗi lĩnh vực chỉ cần chú ý:
+   ```json
+   "daily_target": { "value": 60, "unit": "phút", "direction": "at_least" }
+   ```
+   - `value` + `unit`: chỉ tiêu mỗi ngày (60 phút, 30 phút, 200000 vnd…)
+   - `direction`: `at_least` = **phải đạt tối thiểu** (học, tập) · `at_most` = **không được vượt** (chi tiêu, đồ ăn nhanh)
+4. Mẹo: lưu link vào màn hình chính điện thoại (Chrome → ⋮ → *Thêm vào màn hình chính*) để mở như app.
+
+### Dùng hằng ngày — cứ nhắn như nói chuyện
+
+| Muốn | Nhắn thử |
+|---|---|
+| **Ghi tiến độ** | *"Hôm nay tôi học 45 phút tiếng Anh"* · *"Chạy 3km, tập 30 phút"* · *"Trưa nay ăn 50k, tối 80k"* · *"Hôm qua code 2 tiếng"* |
+| **Đặt nhắc (lịch)** | *"Nhắc tôi học tiếng Anh 8h tối mai"* · *"Thứ 7 này 6h sáng nhắc chạy bộ"* |
+| **Nhắc lặp lại** | *"Mỗi tối 9h nhắc tôi học AI 1 tiếng"* · *"Mỗi chủ nhật nhắc review kế hoạch"* |
+| **Nhắc qua email** | *"Gửi email nhắc tôi đóng tiền nhà ngày 5 tháng sau"* (phải nói rõ "email", mặc định là lịch) |
+| **Xin lời khuyên** | *"Tôi đang đi đúng kế hoạch chưa?"* · *"Tháng này chi tiêu thế nào?"* · *"Nên điều chỉnh gì cho phần vận động?"* |
+| **Xem tổng kết** | *"Tuần này tôi thế nào?"* · *"30 ngày qua học ngoại ngữ ra sao?"* |
+
+Không muốn chat? Dùng ô **Ghi nhanh** ở tab **Tiến độ**: chọn lĩnh vực → nhập số → đơn vị → **Ghi**.
+
+### Đọc tab Tiến độ
+
+- **Vòng tròn %** = số ngày đạt ÷ số ngày *đã theo dõi* (ngày trước khi bắt đầu ghi không tính).
+- **Vạch xanh cao** = ngày đạt · **vạch hồng thấp** = ngày trượt · **vạch mờ** = chưa theo dõi. Rê chuột lên vạch để xem số.
+- **⚠️ viền vàng** = đã lệch ≥ 3 ngày liên tiếp — tối đó 21h sẽ có email cảnh báo.
+
+### Mẹo để bot hiểu đúng
+
+- **Nói rõ giờ**: "8h tối" tốt hơn "tối nay". Bot hiểu giờ Việt Nam; thiếu giờ thì nó thường hỏi lại — nhưng cứ xem dòng 🔧 để chắc giờ nó đặt đúng ý.
+- **Một câu nhiều việc được**: *"học 1 tiếng, chạy 5km, tiêu 120k"* → bot ghi 3 lần.
+- **Nhắc qua email có thể trễ tối đa 15 phút** (cron quét 15 phút/lần). Cần đúng giờ thì dùng nhắc qua **lịch** — Google báo chính xác.
+- Nhìn các dòng **🔧 xanh** để chắc bot *đã thực sự làm*; dòng **🚫 đỏ** là bị chặn kèm lý do.
+- Bot **không** xoá được lịch/email, không đọc được hộp thư, không gửi mail cho người khác — nhờ làm những việc này nó sẽ từ chối.
+- Muốn sửa/xoá một nhắc nhở đã tạo: vào thẳng Google Calendar mà sửa.
+
+## 4. Cách hoạt động
 
 ```
 Bạn gõ tin nhắn
@@ -61,7 +103,7 @@ Màn hình hiện từng hành động + câu trả lời
 
 **Đăng nhập:** bấm vào link → Google hỏi quyền → server kiểm tra email có đúng của bạn không → lưu token Google (đã mã hoá) → cấp cookie phiên 30 ngày. Nhờ token đó mà cron gửi mail được cả khi bạn không mở app.
 
-## 4. Công nghệ
+## 5. Công nghệ
 
 | Phần | Dùng gì | Vì sao |
 |---|---|---|
@@ -73,7 +115,7 @@ Màn hình hiện từng hành động + câu trả lời
 
 Một project duy nhất — Worker vừa chạy API vừa phục vụ giao diện, không tách FE/BE.
 
-## 5. Các bước deploy (đã làm)
+## 6. Các bước deploy (đã làm)
 
 1. **Google** — lấy Gemini API key ở aistudio.google.com; bật Gmail API + Calendar API; tạo OAuth Client loại *Web application*.
 2. **Branding** — điền trang chủ `/about` + chính sách `/privacy` (bắt buộc thì mới Publish được).
@@ -85,7 +127,7 @@ Một project duy nhất — Worker vừa chạy API vừa phục vụ giao di�
 
 Cập nhật sau này chỉ cần: sửa code → `npm run deploy` (khoảng 10 giây).
 
-## 6. Có free thật không?
+## 7. Có free thật không?
 
 **Có — 0đ, không nhập thẻ ở bất kỳ đâu.** Vì không có thẻ nên **không thể bị trừ tiền bất ngờ**: nếu vượt giới hạn, dịch vụ chỉ báo lỗi tạm thời, không tính phí.
 
@@ -93,7 +135,7 @@ Cập nhật sau này chỉ cần: sửa code → `npm run deploy` (khoảng 10 
 |---|---|---|---|
 | Cloudflare Workers | 100.000 request/ngày | Vài trăm/ngày | ~300 lần |
 | Cloudflare Cron | 5 lịch | Dùng 2 | Còn 3 |
-| Cloudflare D1 | 500 MB/database, 5 GB tổng | Vài chục MB/năm | Xem mục 7 |
+| Cloudflare D1 | 500 MB/database, 5 GB tổng | Vài chục MB/năm | Xem mục 8 |
 | Gemini API | Giới hạn số lượt/phút và /ngày (xem ở aistudio.google.com) | Mỗi câu chat tốn 1–3 lượt | Đủ cho 1 người |
 | Gmail / Calendar API | Hạn mức rất lớn | Vài lượt/ngày | Gần như vô hạn |
 | Google OAuth (chưa xác minh) | 100 người dùng trọn đời | 1 người | Thừa |
@@ -103,7 +145,7 @@ Cập nhật sau này chỉ cần: sửa code → `npm run deploy` (khoảng 10 
 - Dữ liệu chat gửi qua Gemini **gói miễn phí** có thể được Google dùng để cải thiện sản phẩm. Nội dung Gmail/Calendar thì không bao giờ gửi đi (app không đọc được chúng).
 - Lần đăng nhập đầu có cảnh báo *"Google chưa xác minh ứng dụng"* — bình thường với app cá nhân.
 
-## 7. Free được bao lâu? Nhiều năm được không?
+## 8. Free được bao lâu? Nhiều năm được không?
 
 **Không có ngày hết hạn, không phải bản dùng thử.** Đây là các gói free vĩnh viễn của nhà cung cấp, nên chạy được **nhiều năm** — với điều kiện họ không đổi chính sách. Không ai hứa được "mãi mãi", nên đây là đánh giá rủi ro thực tế:
 
@@ -116,14 +158,14 @@ Cập nhật sau này chỉ cần: sửa code → `npm run deploy` (khoảng 10 
 
 **Tóm lại:** phần hạ tầng (Cloudflare + Google API) gần như chắc chắn free nhiều năm. Chỗ duy nhất cần để mắt là **Gemini** — khi app báo lỗi 404 model hoặc 429 liên tục thì đó là lúc cần cập nhật.
 
-## 8. Việc cần nhớ
+## 9. Việc cần nhớ
 
 - **Đổi mật khẩu Google → phải đăng nhập lại app.** Google tự huỷ token có quyền Gmail khi đổi mật khẩu; lúc đó cron nhắc nhở sẽ ngừng cho đến khi đăng nhập lại.
 - **Nên tạo lại Client secret và Gemini key** vì chúng từng được dán vào khung chat — xong thì nạp lại bằng `wrangler secret bulk`.
 - **Xem app có lỗi không:** `npm run tail`, hoặc Cloudflare Dashboard → Workers & Pages → `khpt-assistant` → Logs.
 - **Xem bot đã làm gì:** Cloudflare → D1 → `khpt-assistant` → Console → `SELECT * FROM audit_log ORDER BY id DESC LIMIT 20`.
 
-## 9. Lỗi đã gặp khi deploy (bài học)
+## 10. Lỗi đã gặp khi deploy (bài học)
 
 | Lỗi | Nguyên nhân | Bài học |
 |---|---|---|
