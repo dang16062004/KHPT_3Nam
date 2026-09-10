@@ -50,6 +50,13 @@ const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 // ============================================================ dang nhap
 
 app.get('/auth/login', async (c) => {
+  // Chua nap du secret thi bao thang, thay vi day nguoi dung sang Google voi
+  // client_id=undefined roi de Google in ra mot trang loi kho hieu.
+  const missing = (['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GEMINI_API_KEY', 'ALLOWED_EMAIL'] as const).filter(
+    (key) => !c.env[key],
+  );
+  if (missing.length) return c.html(setupPage(missing), 503);
+
   const state = randomToken();
   setCookie(c, OAUTH_STATE_COOKIE, state, {
     httpOnly: true,
@@ -368,15 +375,62 @@ function escapeHtmlText(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/** Trang huong dan khi con thieu secret — trang thai binh thuong ngay sau khi deploy lan dau. */
+function setupPage(missing: readonly string[]): string {
+  const items = missing.map((k) => `<li><code>${k}</code></li>`).join('');
+  return shell(
+    '⚙️',
+    'Chưa cấu hình xong',
+    `<p style="color:#9ca3af;line-height:1.7;margin:0 0 18px">Ứng dụng đã deploy nhưng còn thiếu ${missing.length} biến bí mật:</p>
+     <ul style="text-align:left;display:inline-block;color:#e5e7eb;line-height:2;margin:0 0 22px;padding-left:20px">${items}</ul>
+     <p style="color:#9ca3af;line-height:1.7;margin:0 0 8px;font-size:14px">Tạo file <code>.secrets.json</code> chứa các giá trị đó rồi chạy:</p>
+     <pre style="text-align:left;background:#12151d;border:1px solid #262e3d;border-radius:10px;padding:12px 14px;overflow-x:auto;color:#c9d1e3;font-size:13px;margin:0 0 20px">npx wrangler secret bulk .secrets.json
+npx wrangler deploy</pre>
+     <p style="color:#6b7280;font-size:13px;margin:0">Xem mục "Cài đặt" trong README để biết cách lấy từng giá trị.</p>`,
+    false,
+  );
+}
+
 function errorPage(messageHtml: string): string {
+  return shell(
+    '🔒',
+    'Không truy cập được',
+    `<p style="color:#9ca3af;line-height:1.7;margin:0 0 24px">${messageHtml}</p>`,
+    true,
+  );
+}
+
+/**
+ * Khung HTML dung chung cho cac trang ngoai ung dung (loi, huong dan cai dat).
+ * Cac trang nay phai tu chua CSS: nguoi dung chua dang nhap thi khong tai UI chinh.
+ */
+function shell(icon: string, title: string, bodyHtml: string, showLoginButton: boolean): string {
   return `<!doctype html><html lang="vi"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>Không truy cập được</title></head>
-<body style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#0f1115;color:#e5e7eb;display:grid;place-items:center;min-height:100vh;margin:0;padding:24px">
-<div style="max-width:460px;text-align:center">
-  <div style="font-size:42px;margin-bottom:12px">🔒</div>
-  <h1 style="font-size:20px;margin:0 0 12px">Không truy cập được</h1>
-  <p style="color:#9ca3af;line-height:1.6;margin:0 0 24px">${messageHtml}</p>
-  <a href="/auth/login" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px">Thử đăng nhập lại</a>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { font-family:"Be Vietnam Pro",-apple-system,Segoe UI,Roboto,sans-serif; background:#0a0c12; color:#eef1f7;
+         display:grid; place-items:center; min-height:100vh; margin:0; padding:24px; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; z-index:-1;
+                 background:radial-gradient(60% 50% at 30% 0%, rgba(124,140,255,.20), transparent 70%),
+                            radial-gradient(50% 45% at 80% 15%, rgba(176,108,255,.16), transparent 70%); }
+  .box { max-width:480px; text-align:center; background:rgba(22,27,40,.72); backdrop-filter:blur(18px);
+         border:1px solid rgba(255,255,255,.08); border-radius:20px; padding:34px 30px;
+         box-shadow:0 20px 60px rgba(0,0,0,.45); }
+  .mark { width:60px; height:60px; margin:0 auto 18px; display:grid; place-items:center; font-size:27px;
+          border-radius:19px; background:linear-gradient(135deg,#7c8cff,#b06cff); box-shadow:0 12px 32px rgba(124,140,255,.35); }
+  h1 { font-size:21px; margin:0 0 14px; letter-spacing:-.02em; }
+  code { font-family:ui-monospace,Consolas,monospace; font-size:.9em; background:rgba(30,36,52,.8);
+         border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:2px 7px; }
+  a.btn { display:inline-block; background:linear-gradient(135deg,#7c8cff,#b06cff); color:#fff; text-decoration:none;
+          padding:11px 24px; border-radius:12px; font-weight:500; box-shadow:0 8px 24px rgba(124,140,255,.35); }
+</style></head>
+<body><div class="box">
+  <div class="mark">${icon}</div>
+  <h1>${title}</h1>
+  ${bodyHtml}
+  ${showLoginButton ? '<a class="btn" href="/auth/login">Thử đăng nhập lại</a>' : ''}
 </div></body></html>`;
 }
 
