@@ -1,48 +1,94 @@
 <!doctype html>
-<html lang="vi">
+<html lang="vi" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Trợ lý cá nhân</title>
+  <meta name="theme-color" content="#0a0c12">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
 </head>
 <body>
 
+<!-- nền gradient động -->
+<div class="aurora" aria-hidden="true">
+  <span class="blob b1"></span>
+  <span class="blob b2"></span>
+  <span class="blob b3"></span>
+</div>
+
 <header class="topbar">
   <div class="brand">
     <span class="brand-mark">🎯</span>
-    <div>
+    <div class="brand-text">
       <div class="brand-name">Trợ lý cá nhân</div>
-      <div class="brand-sub" id="brandSub">đang tải…</div>
+      <div class="brand-sub" id="brandSub">đang kết nối…</div>
     </div>
   </div>
-  <nav class="tabs" role="tablist">
-    <button class="tab is-active" data-tab="chat" role="tab">Chat</button>
-    <button class="tab" data-tab="plan" role="tab">Kế hoạch</button>
-    <button class="tab" data-tab="progress" role="tab">Tiến độ</button>
+
+  <nav class="segmented" role="tablist">
+    <span class="seg-indicator" aria-hidden="true"></span>
+    <button class="tab is-active" data-tab="chat" role="tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Chat</span>
+    </button>
+    <button class="tab" data-tab="plan" role="tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6"/><path d="M9 11h3"/></svg>
+      <span>Kế hoạch</span>
+    </button>
+    <button class="tab" data-tab="progress" role="tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      <span>Tiến độ</span>
+    </button>
   </nav>
-  <button class="ghost-btn" id="logoutBtn" title="Đăng xuất">Đăng xuất</button>
+
+  <div class="topbar-actions">
+    <button class="icon-btn" id="themeBtn" title="Đổi sáng/tối" aria-label="Đổi giao diện sáng tối">
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+    <div class="avatar" id="avatar" title="">?</div>
+    <button class="icon-btn" id="logoutBtn" title="Đăng xuất" aria-label="Đăng xuất">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+    </button>
+  </div>
 </header>
 
 <!-- ============================ CHAT ============================ -->
 <main class="panel is-active" id="panel-chat">
   <div class="chat-scroll" id="chatScroll">
-    <div class="empty" id="chatEmpty">
-      <h2>Chào bạn 👋</h2>
-      <p>Mình có thể <b>nhắc nhở</b>, <b>khuyên dựa trên kế hoạch</b>, và <b>theo dõi tiến độ</b> của bạn.</p>
-      <div class="suggestions">
-        <button class="chip" data-send="Nhắc tôi học tiếng Anh lúc 8h tối mai">Nhắc học tiếng Anh 8h tối mai</button>
-        <button class="chip" data-send="Hôm nay tôi học 45 phút tiếng Anh và chạy 3km">Ghi tiến độ hôm nay</button>
-        <button class="chip" data-send="Tôi đang đi đúng kế hoạch chưa?">Tôi có đúng kế hoạch không?</button>
+    <div class="chat-inner" id="chatInner">
+      <div class="hero" id="chatEmpty">
+        <div class="hero-mark">🎯</div>
+        <h2>Chào bạn</h2>
+        <p>Mình <b>nhắc nhở</b>, <b>khuyên dựa trên kế hoạch thật</b> và <b>theo dõi tiến độ</b> của bạn. Ngoài ba việc đó thì mình không làm gì khác.</p>
+        <div class="suggestions">
+          <button class="chip" data-send="Nhắc tôi học tiếng Anh lúc 8h tối mai">
+            <span class="chip-icon">⏰</span> Nhắc học tiếng Anh 8h tối mai
+          </button>
+          <button class="chip" data-send="Hôm nay tôi học 45 phút tiếng Anh và chạy 3km">
+            <span class="chip-icon">📝</span> Ghi tiến độ hôm nay
+          </button>
+          <button class="chip" data-send="Tôi đang đi đúng kế hoạch chưa?">
+            <span class="chip-icon">🧭</span> Tôi có đúng kế hoạch không?
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <form class="composer" id="chatForm">
-    <textarea id="chatInput" rows="1" placeholder="Nhắn gì đó… (Enter để gửi, Shift+Enter xuống dòng)" autocomplete="off"></textarea>
-    <button type="submit" id="sendBtn" aria-label="Gửi">↑</button>
-  </form>
+  <div class="composer-wrap">
+    <form class="composer" id="chatForm">
+      <textarea id="chatInput" rows="1" placeholder="Nhắn gì đó… (Enter gửi · Shift+Enter xuống dòng)" autocomplete="off"></textarea>
+      <button type="submit" id="sendBtn" aria-label="Gửi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+      </button>
+    </form>
+    <p class="composer-hint">Mọi hành động đều hiện ra trước mắt bạn và được ghi vào nhật ký.</p>
+  </div>
 </main>
 
 <!-- ============================ KẾ HOẠCH ============================ -->
@@ -51,15 +97,21 @@
     <div class="section-head">
       <div>
         <h2>Kế hoạch cá nhân</h2>
-        <p class="muted">Đây là dữ liệu bot đọc khi đưa lời khuyên. Sửa cho khớp mục tiêu thật của bạn rồi bấm Lưu.</p>
+        <p class="muted">Đây chính là dữ liệu bot đọc khi đưa lời khuyên. Sửa cho khớp mục tiêu thật rồi bấm Lưu.</p>
       </div>
       <div class="row-actions">
         <button class="ghost-btn" id="planReload">Tải lại</button>
-        <button class="primary-btn" id="planSave">Lưu</button>
+        <button class="primary-btn" id="planSave">Lưu kế hoạch</button>
       </div>
     </div>
-    <div class="notice" id="planNotice" hidden></div>
-    <textarea id="planEditor" class="code-editor" spellcheck="false"></textarea>
+    <div class="editor-shell">
+      <div class="editor-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="editor-name">plan.json</span>
+        <span class="editor-status" id="planStatus"></span>
+      </div>
+      <textarea id="planEditor" class="code-editor" spellcheck="false"></textarea>
+    </div>
   </div>
 </main>
 
@@ -69,9 +121,9 @@
     <div class="section-head">
       <div>
         <h2>Tiến độ</h2>
-        <p class="muted">Tổng hợp <span id="progressDays">14</span> ngày gần nhất, so với chỉ tiêu trong kế hoạch.</p>
+        <p class="muted">Tổng hợp <span id="progressDays">14</span> ngày gần nhất, đối chiếu với chỉ tiêu trong kế hoạch.</p>
       </div>
-      <select id="daysSelect" class="select">
+      <select id="daysSelect" class="select" aria-label="Khoảng thời gian">
         <option value="7">7 ngày</option>
         <option value="14" selected>14 ngày</option>
         <option value="30">30 ngày</option>
@@ -81,29 +133,40 @@
 
     <div class="cards" id="summaryCards"></div>
 
-    <h3 class="sub-head">Ghi nhanh</h3>
-    <form class="quick-log" id="quickLog">
-      <select name="area" class="select" required>
-        <option value="ngoai_ngu">Ngoại ngữ</option>
-        <option value="ai">AI / Lập trình</option>
-        <option value="kinh_te">Kinh tế</option>
-        <option value="van_dong">Vận động</option>
-        <option value="an_uong">Ăn uống</option>
-      </select>
-      <input name="value" type="number" step="any" min="0" placeholder="Giá trị" class="input" required>
-      <input name="unit" type="text" placeholder="Đơn vị (phút, km…)" class="input" required>
-      <input name="date" type="date" class="input">
-      <button type="submit" class="primary-btn">Ghi</button>
-    </form>
-    <div class="notice" id="logNotice" hidden></div>
+    <section class="block">
+      <h3 class="sub-head"><span>Ghi nhanh</span></h3>
+      <form class="quick-log" id="quickLog">
+        <select name="area" class="select" required>
+          <option value="ngoai_ngu">🗣️ Ngoại ngữ</option>
+          <option value="ai">🤖 AI / Lập trình</option>
+          <option value="kinh_te">💰 Kinh tế</option>
+          <option value="van_dong">🏃 Vận động</option>
+          <option value="an_uong">🍚 Ăn uống</option>
+        </select>
+        <input name="value" type="number" step="any" min="0" placeholder="Giá trị" class="input" required>
+        <input name="unit" type="text" placeholder="Đơn vị (phút, km…)" class="input" required list="unitList">
+        <datalist id="unitList">
+          <option value="phut"></option><option value="gio"></option><option value="km"></option>
+          <option value="buoi"></option><option value="bua"></option><option value="vnd"></option>
+        </datalist>
+        <input name="date" type="date" class="input">
+        <button type="submit" class="primary-btn">Ghi</button>
+      </form>
+    </section>
 
-    <h3 class="sub-head">Nhắc nhở đã đặt</h3>
-    <div id="remindersList" class="list"></div>
+    <section class="block">
+      <h3 class="sub-head"><span>Nhắc nhở đã đặt</span></h3>
+      <div id="remindersList" class="list"></div>
+    </section>
 
-    <h3 class="sub-head">Bản ghi gần đây</h3>
-    <div id="entriesList" class="list"></div>
+    <section class="block">
+      <h3 class="sub-head"><span>Bản ghi gần đây</span></h3>
+      <div id="entriesList" class="list"></div>
+    </section>
   </div>
 </main>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script src="/app.js"></script>
 </body>

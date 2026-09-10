@@ -150,7 +150,10 @@ app.use('/api/*', async (c, next) => {
 app.get('/', async (c) => {
   const session = await readSession(c);
   if (!session) return c.redirect('/auth/login');
-  return c.env.ASSETS.fetch(new Request(new URL('/index.html', c.req.url), c.req.raw));
+  // Phai xin ASSETS dung duong dan "/", KHONG phai "/index.html": asset server tu
+  // chuan hoa "/index.html" thanh mot redirect 307 ve "/", ma "/" lai quay vao day
+  // -> vong lap redirect vo tan ngay sau khi dang nhap.
+  return c.env.ASSETS.fetch(c.req.raw);
 });
 
 // ============================================================ API

@@ -8,17 +8,34 @@
 import type { ProgressRow } from '../db/queries';
 import { recentDates, toVNDate } from '../util/time';
 
-/** Bang quy doi don vi. Chi quy doi nhung cai chac chan dung. */
+/**
+ * Bo dau tieng Viet va chuan hoa don vi truoc khi so sanh.
+ *
+ * Bat buoc phai co: ke hoach ghi "phút" con Gemini ghi "phut" (hoac nguoc lai) la
+ * chuyen binh thuong. Neu so khop bang chuoi chinh xac thi ban ghi bi coi la "khong
+ * quy doi duoc", bi loai khoi phan so sanh, va tinh nang giam sat hong trong im lang.
+ */
+function normalizeUnit(unit: string): string {
+  return unit
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '') // dau thanh + dau mu
+    .replace(/đ/g, 'd')
+    .replace(/\s+/g, '')
+    .trim();
+}
+
+/** Bang quy doi don vi (khoa da chuan hoa). Chi quy doi nhung cai chac chan dung. */
 const CONVERSIONS: Record<string, Record<string, number>> = {
-  phut: { gio: 1 / 60, phut: 1 },
-  gio: { phut: 60, gio: 1 },
-  km: { km: 1, m: 1000 },
-  m: { km: 1 / 1000, m: 1 },
+  phut: { gio: 1 / 60 },
+  gio: { phut: 60 },
+  km: { m: 1000 },
+  m: { km: 1 / 1000 },
 };
 
 function convert(value: number, from: string, to: string): number | null {
-  const a = from.toLowerCase().trim();
-  const b = to.toLowerCase().trim();
+  const a = normalizeUnit(from);
+  const b = normalizeUnit(to);
   if (a === b) return value;
   const factor = CONVERSIONS[a]?.[b];
   return factor === undefined ? null : value * factor;
@@ -50,8 +67,12 @@ export interface AreaSummary {
   label: string;
   muc_tieu: string | null;
   chi_tieu_ngay: string | null;
+  /** Tach rieng phan so de UI tu dinh dang (1470000 -> "1.470.000"). */
+  chi_tieu_gia_tri: number | null;
   huong: 'at_least' | 'at_most';
   so_ngay_xet: number;
+  /** So ngay TINH TU luc bat dau theo doi linh vuc nay — mau so that de danh gia. */
+  so_ngay_theo_doi: number;
   so_ngay_co_ghi_nhan: number;
   tong: number | null;
   trung_binh_moi_ngay: number | null;
@@ -60,7 +81,7 @@ export interface AreaSummary {
   so_ngay_lech_lien_tiep: number;
   canh_bao: string | null;
   ban_ghi_khong_quy_doi_duoc: string[];
-  theo_ngay: Array<{ ngay: string; gia_tri: number; dat: boolean }>;
+  theo_ngay: Array<{ ngay: string; gia_tri: number; dat: boolean; theo_doi: boolean }>;
 }
 
 /** Nguong mac dinh neu ke hoach khong khai bao. */
@@ -98,15 +119,22 @@ export function summarizeArea(
   const dates = recentDates(days, now);
   const today = toVNDate(now);
 
+  // Ngay bat dau theo doi linh vuc nay. Nhung ngay TRUOC do khong tinh vao dau ca —
+  // khong tinh la "lech" (neu khong, tai khoan vua tao se bi canh bao ngay), va cung
+  // khong tinh la "dat" (voi chi tieu kieu at_most nhu chi tieu, ngay khong ghi se bi
+  // coi la tieu 0d va an diem — hoa ra tu khen 14/14 ngay du moi ghi 5 ngay).
+  const firstLoggedDate = byDate.size ? [...byDate.keys()].sort()[0] : null;
+
   const perDay = dates.map((ngay) => {
     const giaTri = byDate.get(ngay) ?? 0;
-    const dat = !target ? giaTri > 0 : direction === 'at_least' ? giaTri >= target.value : giaTri <= target.value;
-    return { ngay, gia_tri: Number(giaTri.toFixed(2)), dat };
+    const theoDoi = firstLoggedDate !== null && ngay >= firstLoggedDate;
+    const dat =
+      theoDoi &&
+      (!target ? giaTri > 0 : direction === 'at_least' ? giaTri >= target.value : giaTri <= target.value);
+    return { ngay, gia_tri: Number(giaTri.toFixed(2)), dat, theo_doi: theoDoi };
   });
 
-  // Ngay bat dau theo doi linh vuc nay. Nhung ngay TRUOC do khong tinh la "lech" —
-  // neu khong, tai khoan vua tao se lap tuc bi canh bao vi ca thang truoc deu trong.
-  const firstLoggedDate = byDate.size ? [...byDate.keys()].sort()[0] : null;
+  const trackedDays = perDay.filter((d) => d.theo_doi).length;
 
   // Dem chuoi ngay lech LIEN TIEP, bo qua hom nay vi ngay chua ket thuc.
   let streak = 0;
@@ -135,11 +163,13 @@ export function summarizeArea(
     label: planArea.label ?? areaKey,
     muc_tieu: planArea.muc_tieu_3_nam ?? null,
     chi_tieu_ngay: target ? `${target.value} ${target.unit}` : null,
+    chi_tieu_gia_tri: target ? target.value : null,
     huong: direction,
     so_ngay_xet: days,
+    so_ngay_theo_doi: trackedDays,
     so_ngay_co_ghi_nhan: daysLogged,
     tong: daysLogged ? Number(total.toFixed(2)) : null,
-    trung_binh_moi_ngay: daysLogged ? Number((total / days).toFixed(2)) : null,
+    trung_binh_moi_ngay: trackedDays ? Number((total / trackedDays).toFixed(2)) : null,
     don_vi: targetUnit,
     so_ngay_dat: perDay.filter((d) => d.dat).length,
     so_ngay_lech_lien_tiep: streak,
