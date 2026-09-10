@@ -47,6 +47,20 @@ const OAUTH_STATE_COOKIE = 'khpt_oauth_state';
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
+/**
+ * Loi chua bat duoc: ghi log day du (xem bang `npm run tail`), va hien trang loi co
+ * ma tham chieu thay vi dong chu "Internal Server Error" tron — de khi nguoi dung
+ * chup man hinh gui lai thi tim duoc dung dong log.
+ */
+app.onError((err, c) => {
+  const ref = randomToken(4);
+  console.error(`[${ref}] ${c.req.method} ${new URL(c.req.url).pathname}:`, err.stack ?? err.message);
+  if (new URL(c.req.url).pathname.startsWith('/api/')) {
+    return c.json({ error: `Lỗi máy chủ (mã ${ref}): ${err.message}` }, 500);
+  }
+  return c.html(errorPage(`Lỗi máy chủ: ${escapeHtmlText(err.message)}<br><small>Mã tham chiếu: ${ref}</small>`), 500);
+});
+
 // ============================================================ dang nhap
 
 app.get('/auth/login', async (c) => {
@@ -57,8 +71,12 @@ app.get('/auth/login', async (c) => {
   );
   if (missing.length) return c.html(setupPage(missing), 503);
 
+  // Cookie giu TOI DA 5 state gan nhat thay vi 1. Neu chi giu 1, bam dang nhap o
+  // tab thu hai se ghi de state cua tab thu nhat, va dong y o tab cu -> "State khong
+  // khop". Van chong CSRF vi state phai nam trong cookie cua CHINH trinh duyet nay.
   const state = randomToken();
-  setCookie(c, OAUTH_STATE_COOKIE, state, {
+  const previous = (getCookie(c, OAUTH_STATE_COOKIE) ?? '').split('.').filter(Boolean);
+  setCookie(c, OAUTH_STATE_COOKIE, [...previous, state].slice(-5).join('.'), {
     httpOnly: true,
     secure: true,
     sameSite: 'Lax',
@@ -69,47 +87,58 @@ app.get('/auth/login', async (c) => {
 });
 
 app.get('/auth/callback', async (c) => {
+  /** Moi nhanh that bai deu ghi log — truoc day khong co, nen loi xay ra ma khong ai biet vi sao. */
+  const fail = (status: 400 | 403 | 502, logReason: string, messageHtml: string) => {
+    console.error(`[auth/callback] ${status} ${logReason}`);
+    return c.html(errorPage(messageHtml), status);
+  };
+
   const url = new URL(c.req.url);
   const error = url.searchParams.get('error');
-  if (error) return c.html(errorPage(`Google trả về lỗi: ${error}`), 400);
+  if (error) return fail(400, `google error=${error}`, `Google trả về lỗi: ${escapeHtmlText(error)}`);
 
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state');
-  const expectedState = getCookie(c, OAUTH_STATE_COOKIE);
+  const knownStates = (getCookie(c, OAUTH_STATE_COOKIE) ?? '').split('.').filter(Boolean);
 
-  if (!code) return c.html(errorPage('Thiếu mã uỷ quyền từ Google.'), 400);
-  if (!state || !expectedState || state !== expectedState) {
-    return c.html(errorPage('State không khớp — có thể là request giả mạo. Hãy đăng nhập lại từ đầu.'), 400);
+  if (!code) return fail(400, 'thieu code', 'Thiếu mã uỷ quyền từ Google.');
+  if (!state || !knownStates.includes(state)) {
+    return fail(
+      400,
+      `state khong khop (cookie co ${knownStates.length} state)`,
+      knownStates.length === 0
+        ? 'Phiên đăng nhập đã hết hạn (quá 10 phút) hoặc trình duyệt chặn cookie. Hãy bấm đăng nhập lại.'
+        : 'Bạn đang hoàn tất đăng nhập từ một tab Google cũ. Hãy đóng các tab Google khác rồi đăng nhập lại.',
+    );
   }
 
   let tokens;
   try {
     tokens = await exchangeCode(c.env, code, redirectUri(c.req.raw));
   } catch (err) {
-    return c.html(errorPage(`Không đổi được mã lấy token: ${(err as Error).message}`), 502);
+    const msg = (err as Error).message;
+    return fail(502, `exchangeCode: ${msg}`, `Không đổi được mã lấy token: ${escapeHtmlText(msg)}`);
   }
 
-  if (!tokens.id_token) return c.html(errorPage('Google không trả về id_token.'), 502);
+  if (!tokens.id_token) return fail(502, 'khong co id_token', 'Google không trả về id_token.');
 
   const identity = identityFromIdToken(tokens.id_token);
 
   // === CHOT CHAN: chi dung mot email duy nhat duoc vao ===
   if (identity.email.trim().toLowerCase() !== c.env.ALLOWED_EMAIL.trim().toLowerCase()) {
-    return c.html(
-      errorPage(
-        `Tài khoản <b>${escapeHtmlText(identity.email)}</b> không có quyền truy cập ứng dụng này.<br>` +
-          `Đây là trợ lý cá nhân, chỉ dành cho đúng một tài khoản.`,
-      ),
+    return fail(
       403,
+      `email bi chan: ${identity.email}`,
+      `Tài khoản <b>${escapeHtmlText(identity.email)}</b> không có quyền truy cập ứng dụng này.<br>` +
+        `Đây là trợ lý cá nhân, chỉ dành cho đúng một tài khoản.`,
     );
   }
 
   if (!tokens.refresh_token) {
-    return c.html(
-      errorPage(
-        'Google không cấp refresh token. Hãy vào myaccount.google.com/permissions, gỡ quyền của ứng dụng này rồi đăng nhập lại.',
-      ),
+    return fail(
       502,
+      'khong co refresh_token',
+      'Google không cấp refresh token. Hãy vào myaccount.google.com/permissions, gỡ quyền của ứng dụng này rồi đăng nhập lại.',
     );
   }
 
