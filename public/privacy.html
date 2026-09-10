@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chính sách quyền riêng tư — Trợ lý cá nhân KHPT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/legal.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><span class="mark">🎯</span><a href="/about">Trợ lý cá nhân KHPT</a></div>
+
+  <h1>Chính sách quyền riêng tư</h1>
+  <p class="lead">Cập nhật lần cuối: 10/09/2026</p>
+
+  <div class="card">
+    <h2>1. Ứng dụng này là gì</h2>
+    <p>
+      "Trợ lý cá nhân KHPT" là ứng dụng cá nhân, phi thương mại, do chính chủ tài khoản xây dựng và sử dụng.
+      Chỉ đúng một tài khoản Google được cấu hình sẵn mới đăng nhập được; mọi tài khoản khác bị từ chối
+      ngay ở bước đăng nhập và không có dữ liệu nào của họ được lưu lại.
+    </p>
+
+    <h2>2. Dữ liệu được thu thập</h2>
+    <ul>
+      <li><b>Thông tin tài khoản Google:</b> mã định danh, địa chỉ email, tên hiển thị, ảnh đại diện.</li>
+      <li><b>Token OAuth của Google:</b> refresh token và access token — được <b>mã hoá AES-GCM</b> trước khi lưu.</li>
+      <li><b>Dữ liệu người dùng tự nhập:</b> kế hoạch cá nhân, nhật ký tiến độ, nội dung trò chuyện với chatbot, danh sách nhắc nhở.</li>
+      <li><b>Nhật ký kiểm toán:</b> mỗi hành động chatbot thực hiện (kể cả hành động bị từ chối) để chủ tài khoản kiểm tra lại.</li>
+    </ul>
+
+    <h2>3. Quyền truy cập Google và cách sử dụng</h2>
+    <ul>
+      <li>
+        <code>https://www.googleapis.com/auth/gmail.send</code> — chỉ dùng để gửi email nhắc nhở
+        <b>đến chính địa chỉ email của chủ tài khoản</b>. Ứng dụng không có quyền đọc, tìm kiếm, sửa hay xoá email.
+        Mã nguồn không có cách nào để chỉ định người nhận khác.
+      </li>
+      <li>
+        <code>https://www.googleapis.com/auth/calendar.events</code> — chỉ dùng để tạo sự kiện nhắc nhở
+        trong lịch chính, không gửi lời mời cho người khác và không xoá sự kiện.
+      </li>
+      <li><code>openid</code>, <code>email</code>, <code>profile</code> — để xác thực đúng chủ tài khoản.</li>
+    </ul>
+
+    <h2>4. Tuân thủ chính sách dữ liệu người dùng của Google</h2>
+    <p>
+      Việc ứng dụng sử dụng và chuyển giao thông tin nhận được từ Google API tuân thủ
+      <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>,
+      bao gồm các yêu cầu về <i>Limited Use</i> (Sử dụng giới hạn). Dữ liệu từ Google API không được bán,
+      không dùng cho quảng cáo, và không dùng để huấn luyện mô hình AI.
+    </p>
+
+    <h2>5. Dữ liệu được lưu ở đâu và chia sẻ với ai</h2>
+    <ul>
+      <li><b>Cloudflare</b> (Workers và cơ sở dữ liệu D1) — nơi chạy ứng dụng và lưu dữ liệu ở mục 2.</li>
+      <li>
+        <b>Google Gemini API</b> — nội dung tin nhắn chat, kế hoạch và số liệu tiến độ liên quan được gửi tới
+        Gemini để tạo câu trả lời. Ứng dụng dùng gói miễn phí của Gemini API; theo điều khoản của Google,
+        nội dung gửi qua gói miễn phí có thể được Google dùng để cải thiện sản phẩm.
+        <b>Nội dung email và lịch của bạn không được gửi tới Gemini</b> — ứng dụng không đọc được chúng.
+      </li>
+      <li>Dữ liệu không được chia sẻ, bán hay chuyển giao cho bất kỳ bên thứ ba nào khác.</li>
+    </ul>
+
+    <h2>6. Bảo mật</h2>
+    <ul>
+      <li>Toàn bộ kết nối dùng HTTPS.</li>
+      <li>Token Google được mã hoá trước khi lưu; khoá mã hoá nằm trong biến bí mật, không nằm trong mã nguồn.</li>
+      <li>Phiên đăng nhập dùng cookie ký HMAC, <code>HttpOnly</code>, <code>Secure</code>.</li>
+    </ul>
+
+    <h2>7. Thu hồi quyền và xoá dữ liệu</h2>
+    <ul>
+      <li>
+        Thu hồi quyền bất cứ lúc nào tại
+        <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>.
+        Sau khi thu hồi, ứng dụng không thể gửi email hay tạo sự kiện nữa.
+      </li>
+      <li>Lịch sử trò chuyện có thể xoá ngay trong ứng dụng.</li>
+      <li>Để xoá toàn bộ dữ liệu còn lại, liên hệ email bên dưới; dữ liệu sẽ được xoá trong vòng 30 ngày.</li>
+    </ul>
+
+    <h2>8. Liên hệ</h2>
+    <p>Pham Cong Dang — <a href="mailto:phamcongdang16062004@gmail.com">phamcongdang16062004@gmail.com</a></p>
+  </div>
+
+  <div class="card">
+    <h2>English summary</h2>
+    <p>
+      "Trợ lý cá nhân KHPT" is a personal, non-commercial app used by a single pre-configured Google account.
+      It requests <code>gmail.send</code> solely to send reminder emails to the owner's own address (it cannot read mail),
+      and <code>calendar.events</code> solely to create reminder events. OAuth tokens are encrypted at rest on Cloudflare.
+      Chat messages and user-entered plan/progress data are sent to the Google Gemini API (free tier) to generate replies;
+      Gmail and Calendar content is never sent to Gemini. Data is not sold or shared with other third parties.
+      The app's use of information received from Google APIs adheres to the
+      <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>,
+      including the Limited Use requirements. Revoke access at myaccount.google.com/permissions;
+      request deletion at phamcongdang16062004@gmail.com.
+    </p>
+  </div>
+
+  <footer>
+    <a href="/about">Giới thiệu</a>
+    <a href="/">Đăng nhập</a>
+  </footer>
+</div>
+</body>
+</html>
