@@ -59,6 +59,15 @@
 
 <!-- ============================ CHAT ============================ -->
 <main class="panel is-active" id="panel-chat">
+  <div class="topic-card" id="topicCard" hidden>
+    <button type="button" class="topic-toggle" id="topicToggle" aria-expanded="true">
+      <span class="topic-toggle-icon">▾</span>
+      <span>📅 Luyện tiếng Anh hôm nay</span>
+      <span class="topic-date" id="topicDate"></span>
+    </button>
+    <div class="topic-body" id="topicBody"></div>
+  </div>
+
   <div class="chat-scroll" id="chatScroll">
     <div class="chat-inner" id="chatInner">
       <div class="hero" id="chatEmpty">

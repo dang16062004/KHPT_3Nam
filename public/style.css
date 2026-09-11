@@ -303,6 +303,49 @@ h3.sub-head::after {
 }
 .chip-icon { font-size: 14px; }
 
+/* thẻ "Luyện tiếng Anh hôm nay" — nằm cố định trên đầu khung chat, gấp/mở được */
+.topic-card {
+  flex: 0 0 auto;
+  max-width: 780px; width: calc(100% - 36px);
+  margin: 12px auto 0;
+  background: var(--glass); border: 1px solid var(--border);
+  border-radius: var(--r); backdrop-filter: blur(14px);
+  overflow: hidden;
+}
+
+.topic-toggle {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  background: none; border: 0; cursor: pointer;
+  padding: 11px 16px; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--text);
+  text-align: left;
+}
+.topic-toggle-icon { transition: transform .2s; color: var(--faint); font-size: 11px; }
+.topic-card.collapsed .topic-toggle-icon { transform: rotate(-90deg); }
+.topic-toggle .topic-date { margin-left: auto; font-weight: 400; font-size: 11.5px; color: var(--faint); }
+
+.topic-body {
+  display: grid; gap: 10px;
+  padding: 0 16px 14px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+.topic-card.collapsed .topic-body { display: none; }
+
+.topic-section {
+  background: var(--glass-2); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 12px 13px;
+}
+.topic-tag {
+  display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--accent); background: var(--accent-glow); border-radius: 999px; padding: 2px 9px; margin-bottom: 7px;
+}
+.topic-title { font-size: 13px; line-height: 1.5; margin-bottom: 8px; color: var(--text); }
+.topic-points { margin: 0 0 10px; padding-left: 18px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+.topic-words { font-size: 12px; color: var(--muted); line-height: 1.8; margin: 0 0 10px; }
+.topic-words b { color: var(--text); font-weight: 600; }
+.topic-action {
+  width: 100%; justify-content: center; padding: 7px 10px; font-size: 12.5px;
+}
+
 /* tin nhắn */
 .msg {
   display: flex; gap: 11px; margin-bottom: 18px;
@@ -383,12 +426,14 @@ h3.sub-head::after {
 .trace.allowed { border-left-color: var(--ok); }
 .trace.blocked { border-left-color: var(--danger); color: var(--danger); background: rgba(255, 123, 131, .07); }
 .trace.pending { border-left-color: var(--warn); }
+.trace.retrying { border-left-color: var(--warn); color: var(--warn); background: rgba(255, 196, 107, .07); }
 .trace b { color: var(--text); font-weight: 600; }
 .trace.blocked b { color: var(--danger); }
+.trace.retrying b { color: var(--warn); }
 .trace a { color: var(--accent); font-weight: 500; }
 .trace-detail { opacity: .78; display: block; margin-top: 2px; }
 .trace-icon { font-size: 13px; line-height: 1.4; }
-.trace.pending .trace-icon { animation: spin 1.4s linear infinite; display: inline-block; }
+.trace.pending .trace-icon, .trace.retrying .trace-icon { animation: spin 1.4s linear infinite; display: inline-block; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .typing { display: flex; gap: 5px; padding: 15px 17px; align-items: center; }

@@ -39,6 +39,10 @@ Ràng buộc được khoá **trong code**, không chỉ dặn trong prompt: too
 - 21h mỗi tối: nếu có mục lệch kế hoạch ≥ 3 ngày → gửi 1 email cảnh báo (không có gì thì im lặng).
 - Sự kiện Calendar thì Google tự báo (popup trước 10 phút, email trước 30 phút).
 
+**📅 Luyện tiếng Anh hôm nay** *(mới)*
+- Thẻ cố định trên đầu khung Chat, gấp/mở được: mỗi ngày gợi ý 1 chủ đề **Speaking** (IELTS Part 2 + Part 3), 1 đề **Writing Task 2**, và 1 bộ **từ vựng** chủ đề — đổi mới lúc nửa đêm giờ Việt Nam, xoay vòng qua 24 chủ đề nói / 20 đề viết / 14 chủ đề từ vựng nên không lặp lại sớm.
+- Bấm nút là bot vào vai giám khảo/chấm bài ngay trong khung chat — không phải hành động (không tool nào cả), chỉ là trò chuyện tự do nên không phá vỡ ràng buộc 3 nhóm.
+
 **Khác:** sáng/tối, dùng tốt trên điện thoại, tự quy đổi đơn vị (2 giờ = 120 phút, "phút" = "phut").
 
 ## 3. Hướng dẫn sử dụng
@@ -175,3 +179,4 @@ Cập nhật sau này chỉ cần: sửa code → `npm run deploy` (khoảng 10 
 | Báo "14/14 ngày đạt" khi mới ghi 5 ngày | Ngày chưa ghi bị tính là đạt | Chỉ tính từ ngày bắt đầu theo dõi |
 | Lỗi 403 khi đăng nhập | App Google còn ở chế độ Testing | Phải Publish app |
 | Đăng nhập lỗi khi mở nhiều tab | Mỗi lần bấm login ghi đè mã bảo mật của tab trước | Giữ nhiều mã cùng lúc, và **luôn ghi log lý do lỗi** |
+| Gemini báo lỗi 503 "quá tải" | Gemini đang bị nhiều người dùng cùng gọi, lỗi tạm thời | Server tự thử lại tối đa 3 lần (tăng dần thời gian chờ); UI hiện "🔄 đang thử lại" thay vì báo lỗi ngay |

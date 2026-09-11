@@ -38,6 +38,7 @@ import { callGemini, extractFunctionCalls, extractText, MAX_TOOL_ROUNDS, type Ge
 import { reminderEmailHtml, sendSelfEmail } from './services/gmail';
 import { getValidAccessToken } from './auth/google-oauth';
 import { buildSystemPrompt } from './prompts/system';
+import { describeTopicOfDay, getTopicOfDay } from './services/topic-of-day';
 import { dispatchReminderEmail, executeTool } from './tools/handlers';
 import { summarizeAll, type PlanShape } from './tools/analysis';
 import { recentDates, toVNDate, toVNLocal } from './util/time';
@@ -237,7 +238,13 @@ app.post('/api/chat', async (c) => {
     const send = (data: unknown) => stream.writeSSE({ data: JSON.stringify(data) });
 
     const plan = await getPlan(c.env, s.sub);
-    const systemPrompt = buildSystemPrompt(c.env.ALLOWED_EMAIL, JSON.stringify(plan, null, 1));
+    const topicOfDay = getTopicOfDay(toVNDate(Date.now()));
+    const systemPrompt = buildSystemPrompt(
+      c.env.ALLOWED_EMAIL,
+      JSON.stringify(plan, null, 1),
+      Date.now(),
+      describeTopicOfDay(topicOfDay),
+    );
 
     const history = await recentMessages(c.env, s.sub, Number(c.env.MAX_HISTORY_MESSAGES));
     const contents: GeminiContent[] = history.map((m) => ({
@@ -251,7 +258,9 @@ app.post('/api/chat', async (c) => {
 
     try {
       for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-        const modelTurn = await callGemini(c.env, systemPrompt, contents);
+        const modelTurn = await callGemini(c.env, systemPrompt, contents, (info) =>
+          send({ type: 'retrying', ...info }),
+        );
         const calls = extractFunctionCalls(modelTurn);
 
         if (calls.length === 0) {
@@ -325,6 +334,12 @@ app.post('/api/progress', async (c) => {
   await audit(c.env, s.sub, 'ui:log_progress', raw, true, `ghi #${id}`);
   return c.json({ ok: true, id });
 });
+
+/**
+ * Chu de luyen tieng Anh/IELTS cua hom nay — thuan tuy tinh toan tu ngay, khong
+ * ghi/doc gi vao D1, khong goi Gemini. Front-end dung de hien the "hom nay luyen gi".
+ */
+app.get('/api/topic-of-day', (c) => c.json(getTopicOfDay(toVNDate(Date.now()))));
 
 app.get('/api/reminders', async (c) => {
   const rows = await getUpcomingReminders(c.env, c.get('session').sub);
